@@ -1,5 +1,6 @@
 use std::fs::File;
 use std::io::{self, BufReader, BufRead};
+use std::collections::HashSet;
 
 
 fn parse_input(path: &str) -> Vec<i32> {
@@ -15,13 +16,28 @@ fn parse_input(path: &str) -> Vec<i32> {
     xs
 }
 
-fn day_1_part_1() {
-    let xs: Vec<i32> = parse_input("/Users/dmb/rust_aoc/inputs/d1.txt");
-    let sum: i32 = xs.iter().sum();
-    println!("sum of xs: {}", sum);
+fn day_1_part_1(path: &str) -> i32 {
+    parse_input(path).iter().sum()
+}
+
+fn day_1_part_2(path: &str) -> i32 {
+    let xs = parse_input(path);
+    let mut seen = HashSet::new();
+    let mut freq = 0;
+    loop {
+        for x in xs.iter() {
+            freq += *x;
+            if seen.contains(&freq) {
+                return freq
+            }
+            seen.insert(freq);
+        }
+    }
 }
 
 
 fn main() {
-    day_1_part_1()
+    let path = "/Users/dmb/rust_aoc/inputs/d1.txt";
+    println!("part1: {}", day_1_part_1(path));
+    println!("part1: {}", day_1_part_2(path));
 }
