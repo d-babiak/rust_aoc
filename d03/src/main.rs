@@ -2,6 +2,7 @@ use std::fs::File;
 
 use std::collections::HashMap;
 use std::io::{BufReader, BufRead};
+use core::borrow::Borrow;
 
 #[derive(Debug)]
 struct Claim {
@@ -30,6 +31,11 @@ impl Claim {
         let (w,h) = parse_width_height(xs[3]);
         Claim {id, col, row, w, h}
     }
+
+    fn contains(&self, col: &u32, row: &u32) -> bool {
+        (self.col <= *col && *col <= self.col + self.w) &&
+        (self.row <= *row && *row <= self.row + self.h)
+    }
 }
 
 
@@ -52,18 +58,36 @@ fn place_claim(c: &Claim, counts: &mut HashMap<(u32,u32), usize>) {
     }
 }
 
-
-
-fn main() {
-    let claims = parse_input("input.txt");
-    for (i,c) in claims.iter().enumerate() {
-        println!("{}: {:?}", i, c);
+fn d3_p1(claims: &Vec<Claim>) -> usize {
+    let mut counts: HashMap<(u32,u32), usize> = HashMap::new();
+    for c in claims.iter() {
+        place_claim(c, &mut counts)
     }
+    counts.values().into_iter().filter(|x| **x >= 2usize).count()
+}
+
+fn d3_p2(claims: &Vec<Claim>) -> &str {
     let mut counts: HashMap<(u32,u32), usize> = HashMap::new();
     for c in claims.iter() {
         place_claim(c, &mut counts)
     }
 
-    let n = counts.values().into_iter().filter(|x| **x >= 2usize).count();
-    println!("{}", n)
+    let conflicts: Vec<&(u32,u32)> = counts.iter()
+        .filter(|(_, n)| **n >= 2usize)
+        .map(|(row_col,_)| row_col)
+        .collect();
+
+    let conflict_free = claims.iter()
+        .find(|claim|
+            !conflicts.iter().any(|(r,c)| claim.contains(r,c))
+        )
+        .unwrap();
+
+    conflict_free.id.borrow()
+}
+
+fn main() {
+    let claims = parse_input("input.txt");
+    println!("{}", d3_p1(&claims));
+    println!("{}", d3_p2(&claims));
 }
