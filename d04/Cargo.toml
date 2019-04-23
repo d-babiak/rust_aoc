@@ -1,0 +1,8 @@
+[package]
+name = "d04"
+version = "0.1.0"
+authors = ["Daniel Babiak <d.babiak@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+chrono = "0.4"
