@@ -111,4 +111,11 @@ fn main() {
 
     println!("mode: {:?}", mode);
 
+    let (guard_id, (minute, N)) = m.iter()
+        .map(|(guard_id, events)| (guard_id.clone(), modal_minute(events)) )
+        .max_by(|(_id_1, (minute_1, n_1)), (_id_2, (minute_2, n_2))| n_1.cmp(n_2) )
+        .unwrap();
+
+    println!("(part two) guard_id: {} minute: {} n: {}", guard_id, minute, N);
+
 }
